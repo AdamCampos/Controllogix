@@ -47,7 +47,6 @@
     <Compile Include="Arquivos\LeitorCSV.cs" />
     <Compile Include="ExecutaSQL.cs" />
     <Compile Include="Arquivos\LeitorL5X.cs" />
-    <Compile Include="ManipuladorXML.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Arquivos\LeitorSQL.cs" />
     <Compile Include="Roteador.cs" />

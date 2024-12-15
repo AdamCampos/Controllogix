@@ -27,8 +27,8 @@ class Program
 
         /* As opções são:
         
-        1) ConverterCSV   |   Converte cada arquivo L5X em vários CSV, sendo um CSV por tipo de dado encontrado no L5X. 
-        2)
+        1) ObterBlocosCSV   |   Converte cada arquivo L5X em vários CSV, sendo um CSV por tipo de dado encontrado no L5X. 
+        2) 
         
          */
 

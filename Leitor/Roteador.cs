@@ -9,26 +9,24 @@ namespace Leitor
         {
             try
             {
-                if (operacao.Equals("ConverterCSV", StringComparison.OrdinalIgnoreCase) ||
-                    operacao.Equals("CriarInserts", StringComparison.OrdinalIgnoreCase) ||
-                    operacao.Equals("CriarSQLEstruturaTabelas", StringComparison.OrdinalIgnoreCase))
+                if (operacao.Equals("ObterBlocosCSV", StringComparison.OrdinalIgnoreCase))
                 {
                     // Operações relacionadas a arquivos L5X
                     var l5xReader = new LeitorL5X();
                     l5xReader.Processa();
                 }
-                else if (operacao.Equals("CriarParametrosCSV", StringComparison.OrdinalIgnoreCase))
+                /*else if (operacao.Equals("CriarParametrosCSV", StringComparison.OrdinalIgnoreCase))
                 {
                     // Operação relacionada a arquivos CSV
                     var csvReader = new LeitorCSV();
                     csvReader.Processa();
-                }
-                else if (operacao.Equals("CriarTabelas", StringComparison.OrdinalIgnoreCase))
+                }*/
+                /*else if (operacao.Equals("CriarTabelas", StringComparison.OrdinalIgnoreCase))
                 {
                     // Operação relacionada a arquivos SQL
                     var sqlReader = new LeitorSQL();
                     sqlReader.Processa();
-                }
+                }*/
                 else
                 {
                     Console.WriteLine($"Operação desconhecida: '{operacao}'.");

@@ -55,6 +55,11 @@ namespace Leitor
                 try
                 {
                     CriarCsvPorTag(caminhoArquivoL5X);
+
+                    //Cria o resumo
+                    LeitorCSV leitorCSV = new LeitorCSV();
+                    leitorCSV.ProcessarEstrutura();
+
                 }
                 catch (Exception ex)
                 {
