@@ -9,95 +9,23 @@ namespace Leitor
 {
     public class ManipuladorXML
     {
-        private readonly string _filePath;
+        private readonly string caminhoSaida;
+        private readonly string caminhoEntrada;
 
-        public ManipuladorXML(string filePath)
+        public ManipuladorXML(string caminhoEntrada, string caminhoSaida)
         {
-            _filePath = filePath;
-        }
-
-        public void ConverteArquivo()
-        {
-            using (FileStream fileStream = new FileStream(_filePath, FileMode.Open, FileAccess.Read))
-            {
-                XmlDocument xmlDoc = new XmlDocument();
-                xmlDoc.Load(fileStream);
-
-                CriarCsvPorTag(xmlDoc);
-            }
-        }
-
-        private void CriarCsv(XmlDocument xmlDoc)
-        {
-            string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(_filePath);
-            string csvFilePath = Path.Combine(Path.GetDirectoryName(_filePath), "CSV", fileNameWithoutExtension + ".csv");
-
-            var csvLines = new List<string>();
-            var header = new List<string> { "nomeArquivo", "tagName", "tagDataType", "DataType" };
-
-            XmlNodeList tagNodes = xmlDoc.GetElementsByTagName("Tag");
-            var allParameterNames = new HashSet<string>();
-
-            foreach (XmlNode tagNode in tagNodes)
-            {
-                XmlNode structureNode = tagNode.SelectSingleNode("Data/Structure");
-                if (structureNode != null)
-                {
-                    XmlNodeList dataValueMembers = structureNode.SelectNodes("DataValueMember");
-                    foreach (XmlNode dataValueMember in dataValueMembers)
-                    {
-                        string name = dataValueMember.Attributes?["Name"]?.Value;
-                        if (!string.IsNullOrEmpty(name))
-                        {
-                            allParameterNames.Add(name);
-                        }
-                    }
-                }
-            }
-
-            header.AddRange(allParameterNames.OrderBy(x => x));
-            csvLines.Add(string.Join(",", header));
-
-            foreach (XmlNode tagNode in tagNodes)
-            {
-                string tagName = tagNode.Attributes?["Name"]?.Value ?? "";
-                string tagDataType = tagNode.Attributes?["DataType"]?.Value ?? "";
-
-                XmlNode structureNode = tagNode.SelectSingleNode("Data/Structure");
-                if (structureNode != null)
-                {
-                    XmlNodeList dataValueMembers = structureNode.SelectNodes("DataValueMember");
-
-                    var dataValueDict = dataValueMembers.Cast<XmlNode>().ToDictionary(
-                        node => node.Attributes?["Name"]?.Value ?? "",
-                        node => node.Attributes?["Value"]?.Value ?? ""
-                    );
-
-                    foreach (XmlNode dataValueMember in dataValueMembers)
-                    {
-                        string dataType = dataValueMember.Attributes?["DataType"]?.Value ?? "";
-
-                        var line = new List<string> { Path.GetFileName(_filePath), tagName, tagDataType, dataType };
-                        line.AddRange(allParameterNames.OrderBy(x => x).Select(name => dataValueDict.ContainsKey(name) ? dataValueDict[name] : ""));
-
-                        csvLines.Add(string.Join(",", line));
-                    }
-                }
-            }
-
-            File.WriteAllLines(csvFilePath, csvLines);
-
-            Console.WriteLine($"CSV criado: {csvFilePath}");
+            this.caminhoEntrada = caminhoEntrada;
+            this.caminhoSaida = caminhoSaida;
         }
 
         private void CriarCsvPorTag(XmlDocument xmlDoc)
         {
             // Diretório de saída
-            string outputDirectory = Path.Combine(Path.GetDirectoryName(_filePath), "CSV");
+            string outputDirectory = Path.Combine(Path.GetDirectoryName(caminhoSaida), "CSV");
             Directory.CreateDirectory(outputDirectory);
 
             // Prefixo do nome do arquivo
-            string fileNamePrefix = Path.GetFileNameWithoutExtension(_filePath);
+            string fileNamePrefix = Path.GetFileNameWithoutExtension(caminhoSaida);
 
             // Obtem todas as tags do arquivo XML
             XmlNodeList tagNodes = xmlDoc.GetElementsByTagName("Tag");
@@ -190,69 +118,11 @@ namespace Leitor
             }
         }
 
-        /*        public void CriarTabelas()
-                {
-                    string tiposDirectory = Path.Combine(Path.GetDirectoryName(_filePath), "CSV");
-                    string sqlDirectory = Path.Combine(Path.GetDirectoryName(_filePath), "SQL", "Estrutura");
-                    Directory.CreateDirectory(sqlDirectory);
 
-                    string[] csvFiles = Directory.GetFiles(tiposDirectory, "*.csv");
-
-                    foreach (string csvFile in csvFiles)
-                    {
-                        string tableName = Path.GetFileNameWithoutExtension(csvFile);
-                        string sqlFilePath = Path.Combine(sqlDirectory, tableName + ".sql");
-
-                        var sqlLines = new List<string>();
-                        sqlLines.Add($"CREATE TABLE [dbo].[{tableName}] (");
-
-                        using (var reader = new StreamReader(csvFile))
-                        {
-                            string headerLine = reader.ReadLine();
-                            if (!string.IsNullOrEmpty(headerLine))
-                            {
-                                var columns = headerLine.Split(',');
-
-                                foreach (var column in columns)
-                                {
-                                    string columnName = column.Trim();
-                                    string columnType = "VARCHAR(255)";
-
-                                    if (columnName.StartsWith("I_b") || columnName.StartsWith("O_b"))
-                                    {
-                                        columnType = "BIT";
-                                    }
-                                    else if (columnName.StartsWith("I_i") || columnName.StartsWith("O_i"))
-                                    {
-                                        columnType = "BIGINT";
-                                    }
-                                    else if (columnName.StartsWith("I_r") || columnName.StartsWith("O_r"))
-                                    {
-                                        columnType = "FLOAT";
-                                    }
-
-                                    sqlLines.Add($"    [{columnName}] {columnType},");
-                                }
-                            }
-                        }
-
-                        if (sqlLines.Count > 1)
-                        {
-                            sqlLines[sqlLines.Count - 1] = sqlLines[sqlLines.Count - 1].TrimEnd(','); // Remove última vírgula
-                        }
-
-                        sqlLines.Add(");");
-
-                        File.WriteAllLines(sqlFilePath, sqlLines);
-
-                        Console.WriteLine($"Arquivo SQL criado: {sqlFilePath}");
-                    }
-                }*/
-
-        public void CriarSQLEstruturaTabelas()
+        private void CriarSQLEstruturaTabelas()
         {
-            string tiposDirectory = Path.Combine(Path.GetDirectoryName(_filePath), "CSV");
-            string sqlDirectory = Path.Combine(Path.GetDirectoryName(_filePath), "SQL", "Estrutura");
+            string tiposDirectory = Path.Combine(Path.GetDirectoryName(caminhoSaida), "CSV");
+            string sqlDirectory = Path.Combine(Path.GetDirectoryName(caminhoSaida), "SQL", "Estrutura");
             Directory.CreateDirectory(sqlDirectory);
 
             string[] csvFiles = Directory.GetFiles(tiposDirectory, "*.csv");
@@ -320,8 +190,8 @@ namespace Leitor
         public void CriarInserts()
         {
             // Diretórios de entrada (CSV) e saída (SQL Inserts)
-            string csvDirectory = Path.Combine(Path.GetDirectoryName(_filePath), "CSV");
-            string insertDirectory = Path.Combine(Path.GetDirectoryName(_filePath), "SQL", "Insert");
+            string csvDirectory = Path.Combine(Path.GetDirectoryName(caminhoSaida), "CSV");
+            string insertDirectory = Path.Combine(Path.GetDirectoryName(caminhoSaida), "SQL", "Insert");
             Directory.CreateDirectory(insertDirectory);
 
             // Lista de arquivos CSV no diretório
