@@ -2,7 +2,7 @@
 Este repositório foi criado para ajudar a manter os recursos obtidos pela maipulação 
 de dados dos projetos de lógicas das P=80/P-83
 
-Os projetos de lógica dos PLCs principais das P80 e P83 são escritos para o COntrollogix 5000, atualmente 
+Os projetos de lógica dos PLCs principais das P80 e P83 são escritos para o Controllogix 5000, atualmente 
 na versão 35.
 As lógicas são escritas em Function Blocks, Ladder, Structured Text ou Flowcharts.
 Podem ser salvas em .acd, .l5x, l5k entre outros formatos.
