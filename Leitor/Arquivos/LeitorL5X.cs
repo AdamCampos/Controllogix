@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml;
+
 
 namespace Leitor
 {
@@ -21,7 +23,7 @@ namespace Leitor
         {
         }
 
-        public void Processa()
+        public void ProcessaL5X()
         {
             // Verificar se o diretório de entrada existe
             if (!Directory.Exists(caminhoEntrada))

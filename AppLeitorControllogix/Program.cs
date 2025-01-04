@@ -1,42 +1,33 @@
 ﻿using Leitor;
+using RockwellAutomation.LogixDesigner.LogixProjectServices;
 
 class Program
 {
     static void Main(string[] args)
     {
+        RockwellAutomation.LogixDesigner.LogixProjectServices.IFileReader fileReader;
+
+        // Verifica se um argumento foi fornecido na execução do programa
         if (args.Length < 1)
         {
             Console.WriteLine("Por favor, forneça a operação como argumento.");
-            Console.WriteLine("Exemplo: ConverterCSV");
+            Console.WriteLine("Exemplo de operações válidas: ObterBlocosCSV, CriarTabelas, InserirDados.");
             return;
         }
 
+        // Recupera o argumento da operação
         string operacao = args[0];
 
         try
         {
+            // Instancia o roteador e processa a operação especificada
             Roteador roteador = new Roteador();
             roteador.Processar(operacao);
         }
         catch (Exception ex)
         {
+            // Captura e exibe quaisquer erros ocorridos durante o processamento
             Console.WriteLine($"Erro ao executar a operação '{operacao}': {ex.Message}");
         }
-
-        //Ao rodar no console, é necessário passar uma string para direcionar a ação.
-
-        /* As opções são:
-        
-        1) ObterBlocosCSV   |   Converte cada arquivo L5X em vários CSV, sendo um CSV por tipo de dado encontrado no L5X. 
-        2) 
-        
-         */
-
-        //reader.Processa(caminho, "CriarSQLEstruturaTabelas");
-        //reader.Processa(caminho, "CriarTabelas");
-        //reader.Processa(caminho, "CriarInserts");
-        //reader.Processa(caminho, "ConverterCSV");
-        //reader.Processa(caminho, "CriarParametrosCSV");
-        //reader.Processa(caminho, "SalvarSQL");
     }
 }
