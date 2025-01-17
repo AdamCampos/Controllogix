@@ -1,63 +1,89 @@
-﻿using System;
+﻿using RockwellAutomation.LogixDesigner;
+using RockwellAutomation.LogixDesigner.Logging;
+using System;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
-using RockwellAutomation.LogixDesigner.LogixProjectServices;
 
 namespace Leitor
 {
+    /// <summary>
+    /// Classe responsável por listar e processar arquivos ACD utilizando o SDK da Rockwell.
+    /// </summary>
     public class LeitorACD
     {
-        private readonly string caminhoEntrada = "C:\\RSLogix 5000\\Projects\\P83";
-        private readonly string caminhoSaida = "C:\\Projetos\\VisualStudio\\LeitorControllogix\\Controllogix\\Resources\\ACD_L5X";
+        /// <summary>
+        /// Caminho do diretório onde os arquivos .acd estão localizados.
+        /// </summary>
+        private readonly string caminhoEntrada = "C:\\Projetos\\VisualStudio\\LeitorControllogix\\Controllogix\\Resources\\ACD";
 
-        public void ProcessarEstrutura()
+        /// <summary>
+        /// Caminho do diretório onde os arquivos .l5x serão salvos.
+        /// </summary>
+        private readonly string caminhoSaida = "C:\\Projetos\\VisualStudio\\LeitorControllogix\\Controllogix\\Resources\\L5X";
+
+        /// <summary>
+        /// Lista todos os arquivos .acd no diretório especificado e processa cada um deles.
+        /// </summary>
+        public void ListarArquivosACD()
         {
-            // Verificar se o diretório de entrada existe
+            // Verifica se o diretório de entrada existe
             if (!Directory.Exists(caminhoEntrada))
             {
-                Console.WriteLine($"O diretório de entrada '{caminhoEntrada}' não foi encontrado.");
+                Console.WriteLine($"O diretório '{caminhoEntrada}' não foi encontrado.");
                 return;
             }
 
-            // Obter todos os arquivos CSV no diretório de entrada
-            string[] acdFiles = Directory.GetFiles(caminhoEntrada, "*.acd");
-
-            if (acdFiles.Length == 0)
+            // Verifica se o diretório de saída existe; caso contrário, cria o diretório
+            if (!Directory.Exists(caminhoSaida))
             {
-                Console.WriteLine("Nenhum arquivo .acd foi encontrado no diretório de entrada especificado.");
+                Directory.CreateDirectory(caminhoSaida);
+            }
+
+            // Obtém todos os arquivos com extensão .acd no diretório
+            string[] arquivosACD = Directory.GetFiles(caminhoEntrada, "*.acd");
+
+            if (arquivosACD.Length == 0)
+            {
+                Console.WriteLine("Nenhum arquivo .acd foi encontrado no diretório especificado.");
                 return;
             }
 
-            Console.WriteLine($"Encontrados {acdFiles.Length} arquivo(s) .acd no diretório '{caminhoEntrada}'.\n");
+            Console.WriteLine($"Encontrados {arquivosACD.Length} arquivo(s) .acd no diretório '{caminhoEntrada}':\n");
 
-            var outputLines = new System.Collections.Generic.List<string>();
-
-            // Adiciona cabeçalho ao arquivo de saída
-            outputLines.Add("FileName,TagName");
-
-            foreach (string filePath in acdFiles)
+            // Processa cada arquivo encontrado
+            foreach (string arquivoACD in arquivosACD)
             {
-                string fileName = Path.GetFileNameWithoutExtension(filePath);
-                Console.WriteLine($"Processando arquivo: {fileName}");
-
+                string nomeArquivo = Path.GetFileName(arquivoACD);
+                Console.WriteLine($" - {nomeArquivo}");
+                ProcessarArquivoACD(arquivoACD).Wait();
             }
-            Console.WriteLine("Processamento concluído.");
         }
-        public void ProcessaACD()
+
+        /// <summary>
+        /// Processa o conteúdo de um arquivo ACD, salvando-o como um arquivo L5X no diretório de saída.
+        /// </summary>
+        /// <param name="caminhoArquivo">Caminho completo do arquivo ACD a ser processado.</param>
+        private async Task ProcessarArquivoACD(string caminhoArquivo)
         {
-            string projectFilePath = caminhoEntrada;
-            string saveProjectPath = caminhoSaida;
-            Console.WriteLine("Testando leitura ACD");
-
-            if (!File.Exists(projectFilePath))
+            try
             {
-                Console.WriteLine($"Error: The file '{projectFilePath}' does not exist.");
-                return;
-            }
-  
-        }
+                // Gera o caminho completo para o arquivo L5X no diretório de saída
+                string nomeArquivoL5X = Path.GetFileNameWithoutExtension(caminhoArquivo) + ".l5x";
+                string caminhoL5X = Path.Combine(caminhoSaida, nomeArquivoL5X);
 
+                // Abre o projeto utilizando o SDK da Rockwell
+                using LogixProject project = await LogixProject.OpenLogixProjectAsync(caminhoArquivo, new StdOutEventLogger());
+
+                // Salva o projeto como um arquivo L5X no caminho especificado
+                await project.SaveAsAsync(caminhoL5X, true, false);
+
+                Console.WriteLine($"Arquivo convertido e salvo como: {caminhoL5X}");
+            }
+            catch (Exception ex)
+            {
+                // Trata erros ao processar o arquivo
+                Console.WriteLine($"..Erro ao processar o arquivo ACD: {ex.Message}");
+            }
+        }
     }
 }

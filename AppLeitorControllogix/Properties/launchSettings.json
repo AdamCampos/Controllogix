@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "AppLeitorControllogix": {
+      "commandName": "Project",
+      "commandLineArgs": "ListarArquivosACD"
+    }
+  }
+}

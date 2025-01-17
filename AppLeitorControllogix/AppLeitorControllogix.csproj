@@ -2,32 +2,21 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net8.0-windows10.0.17763.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="EPPlus" Version="7.5.2" />
+    <PackageReference Include="EPPlus" Version="7.5.3" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="RockwellAutomation.LogixDesigner.CSClient" Version="2.1.974" />
     <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Leitor\Leitor.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="LdSdkServer">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Rockwell Software\Studio 5000\Logix Designer SDK\LdSdkServer.dll</HintPath>
-    </Reference>
-    <Reference Include="RockwellAutomation.LogixDesigner.LogixProjectServices">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Rockwell Software\Studio 5000\Logix Designer SDK\RockwellAutomation.LogixDesigner.LogixProjectServices.dll</HintPath>
-    </Reference>
-    <Reference Include="System.ServiceProcess.ServiceController">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Rockwell Software\Studio 5000\Logix Designer SDK\System.ServiceProcess.ServiceController.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>

@@ -1,11 +1,9 @@
 ﻿using Leitor;
-using RockwellAutomation.LogixDesigner.LogixProjectServices;
 
 class Program
 {
     static void Main(string[] args)
     {
-        RockwellAutomation.LogixDesigner.LogixProjectServices.IFileReader fileReader;
 
         // Verifica se um argumento foi fornecido na execução do programa
         if (args.Length < 1)
